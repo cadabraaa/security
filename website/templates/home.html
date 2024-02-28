@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+    <div class="container mt-4">
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-success" role="alert">
+                      {{message}}
+                  </div>
+              {% endfor %}
+          {% endif %}
+      {% endwith %}
+
+     
+      <!---Employees--->
+      <h1 align="center">Employees</h1>
+      <ul class="list-group list-group-flush" id="employees">
+        {% for employee in user.employees %}
+        <li class="list-group-item">
+          {{ employee.name }} - {{ employee.email }}
+          <!-- You can customize the display based on your requirements -->
+          <button type="button" class="close" onClick="deleteEmployee({{ employee.id }})">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <!-- Button to trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEmployeeModal">
+        Add Employee
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addEmployeeModalLabel">Add Employee</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" action="{{ url_for('views.add_employee') }}">
+                <!-- Add your employee form fields here -->
+                <div class="form-group">
+                  <label for="name">Name:</label>
+                  <input type="text" name="name" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="password">Password:</label>
+                  <input type="password" name="password" id="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email:</label>
+                  <input type="email" name="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone:</label>
+                  <input type="text" name="phone" id="phone" class="form-control" required>
+                </div>
+                <div align="center">
+                  <button type="submit" class="btn btn-primary">Add Employee</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!---Employees--->
+      <h1 align="center"></h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for employee in user.employees %}
+          <tr>
+            <th scope="row">{{ employee.id }}</th>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.email }}</td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" onClick="deleteEmployee({{ employee.id }})">
+                Delete
+              </button>
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#updateEmployeeModal{{ employee.id }}">
+                Update
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Modals for Update -->
+      {% for employee in user.employees %}
+      <div class="modal fade" id="updateEmployeeModal{{ employee.id }}" tabindex="-1" role="dialog" aria-labelledby="updateEmployeeModalLabel{{ employee.id }}" aria-hidden="true">
+        <!-- Modal content similar to addEmployeeModal but pre-populate fields with existing data -->
+      </div>
+      {% endfor %}
+
+   </br>
+      
+<!---Notes--->
+<h1 align="center">Notes</h1>
+<ul class="list-group list-group-flush" id="notes">
+  {% for note in user.notes %}
+  <li class="list-group-item">
+    {{ note.data }}
+    <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+<form method="POST">
+  <textarea name="note" id="note" class="form-control"></textarea>
+  <br />
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Add Note</button>
+  </div>
+</form>
+{% endblock %}
